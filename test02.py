@@ -8,10 +8,13 @@ from backtesting.magnus import SMA, BID
 class FollowTheTrend(Strategy):
     def init(self):
         self.buy_price = 0
+        self._index = 0
     def next(self):
         prices = self.data.Close
         opens = self.data.Open
         volumns = self.data.Volume
+        self._index = self._index + 1
+        # print("----------"+str(self._index)+"--------")
         if len(self.data.Volume) > 5:
             self.last_5_volumns = volumns[-5::]
             self.last_3_prices = prices[-3::]
@@ -22,21 +25,23 @@ class FollowTheTrend(Strategy):
             self.last_open_price = opens[-1]
             self.last_volumn = volumns[-1]
             self.last_price = prices[-1]
-        if len(self.data.Volume) > 5:
             if self.last_3_prices[0] < self.last_3_prices[1] and self.last_3_prices[0] < self.last_3_prices[
                 2] and self.last_volumn > 2.5 * self.mean_f and self.last_volumn > 1000000 and self.last_open_price < \
                     self.last_3_prices[2]:
                 self.buy_price = self.last_price
                 self.buy()
-            if self.last_price > 1.05 * self.buy_price:
+            if self.buy_price != 0 and (self.last_price > 1.05 * self.buy_price or self.last_price < 0.9 * self.buy_price):
+                # print("buy price:" + str(self.buy_price))
+                # print("sell price:" + str(self.last_price))
                 self.sell()
+                self.buy_price = 0
 
 
 bt = Backtest(BID, FollowTheTrend, commission=.002,
               exclusive_orders=True)
 stats = bt.run()
-# bt.plot()
-# print(stats)
+bt.plot()
+print(stats)
 # print(stats['_trades'])
 new_file = "result.csv"
 stats['_trades'].to_csv(new_file, index=True)
