@@ -5,7 +5,7 @@ from backtesting.lib import crossover
 from backtesting.magnus import SMA, BID
 
 
-class SmaCross(Strategy):
+class FollowTheTrend(Strategy):
     def init(self):
         self.buy_price = 0
     def next(self):
@@ -32,7 +32,7 @@ class SmaCross(Strategy):
                 self.sell()
 
 
-bt = Backtest(BID, SmaCross, commission=.002,
+bt = Backtest(BID, FollowTheTrend, commission=.002,
               exclusive_orders=True)
 stats = bt.run()
 # bt.plot()
