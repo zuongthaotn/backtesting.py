@@ -11,6 +11,7 @@ def _read_file(filename):
 BID = _read_file('BID.csv')
 """DataFrame of daily VNINDEX:BID stock price data from 2014 to 2020."""
 
+
 def SMA(arr: pd.Series, n: int) -> pd.Series:
     """
     Returns `n`-period simple moving average of array `arr`.
