@@ -18,3 +18,4 @@ doc/build/*
 **/.ipynb_checkpoints
 *~*
 /method/
+/testcases/FollowTheTrend/*.csv

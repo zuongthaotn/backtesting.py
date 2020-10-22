@@ -3,12 +3,7 @@ import pandas as pd
 
 
 def _read_file(filepth):
-    return pd.read_csv(filepth,
-                       index_col=1, parse_dates=True, infer_datetime_format=True)
-
-BID = _read_file('BID.csv')
-"""DataFrame of daily VNINDEX:BID stock price data from 2014 to 2020."""
-
+    return pd.read_csv(filepth, index_col=1, parse_dates=True, infer_datetime_format=True)
 
 def SMA(arr: pd.Series, n: int) -> pd.Series:
     """
@@ -18,6 +13,9 @@ def SMA(arr: pd.Series, n: int) -> pd.Series:
 
 def _read_file02(filename):
     from os.path import dirname, join
+    print(join(dirname(__file__), filename))
+    # return pd.read_csv(join(dirname(__file__), filename),
+    #                    index_col=0, parse_dates=True, infer_datetime_format=True)
 
-    return pd.read_csv(join(dirname(__file__), filename),
-                       index_col=0, parse_dates=True, infer_datetime_format=True)
+BID = _read_file02('BID.csv')
+"""DataFrame of daily VNINDEX:BID stock price data from 2014 to 2020."""
