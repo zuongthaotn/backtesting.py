@@ -2,10 +2,8 @@
 import pandas as pd
 
 
-def _read_file(filename):
-    from os.path import dirname, join
-
-    return pd.read_csv(join(dirname(__file__), filename),
+def _read_file(filepth):
+    return pd.read_csv(filepth,
                        index_col=1, parse_dates=True, infer_datetime_format=True)
 
 BID = _read_file('BID.csv')
@@ -17,3 +15,9 @@ def SMA(arr: pd.Series, n: int) -> pd.Series:
     Returns `n`-period simple moving average of array `arr`.
     """
     return pd.Series(arr).rolling(n).mean()
+
+def _read_file02(filename):
+    from os.path import dirname, join
+
+    return pd.read_csv(join(dirname(__file__), filename),
+                       index_col=0, parse_dates=True, infer_datetime_format=True)
