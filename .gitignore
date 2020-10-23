@@ -19,3 +19,4 @@ doc/build/*
 *~*
 /method/
 /testcases/FollowTheTrend/*.csv
+/testcases/StockBreakOut/*.csv
