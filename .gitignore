@@ -18,5 +18,7 @@ doc/build/*
 **/.ipynb_checkpoints
 *~*
 /method/
+/method/*
+/method
 /testcases/FollowTheTrend/*.csv
 /testcases/StockBreakOut/*.csv
