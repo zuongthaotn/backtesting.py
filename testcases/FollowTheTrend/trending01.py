@@ -3,6 +3,8 @@ import numpy as np
 from backtesting import Backtest, Strategy
 
 from backtesting.magnus import get_pricing
+from backtesting.test import SMA
+from backtesting.lib import crossover
 import method.Ticker as Ticker
 import method.TakeProfit as TakeProfit
 import method.CutLoss as CutLoss
@@ -10,8 +12,12 @@ import method.CutLoss as CutLoss
 path = os.getcwd()
 class FollowTheTrend(Strategy):
     def init(self):
+        price = self.data.Close
         self.buy_price = 0
         self._index = 0
+        self.ma1 = self.I(SMA, price, 10)
+        self.ma2 = self.I(SMA, price, 20)
+
     def next(self):
         prices = self.data.Close
         opens = self.data.Open
@@ -29,18 +35,14 @@ class FollowTheTrend(Strategy):
             last_price = prices[-1]
             if self.buy_price == 0 and Ticker.isFollowTrendingV2(prices, volumes, opens[-1], 2.5):
                 self.buy_price = last_price
-                # print("buy date:" + str(self.data.index[-1]))
                 self.buy()
-            if self.buy_price != 0 and (TakeProfit.takeProfit(8, last_price, self.buy_price) or CutLoss.shouldCutLossByPercent(8, last_price, self.buy_price)):
-                # print("sell date:" + str(self.data.index[-1]))
-                # print("buy price:" + str(self.buy_price))
-                # print("sell price:" + str(self.last_price))
-                # self.sell()
+            # if self.buy_price != 0 and (TakeProfit.takeProfit(5, last_price, self.buy_price) or CutLoss.shouldCutLossByPercent(8,last_price,self.buy_price)):
+            if self.buy_price != 0 and (crossover(self.ma2, self.ma1) or CutLoss.shouldCutLossByPercent(8, last_price, self.buy_price)):
                 self.position.close()
                 self.buy_price = 0
 
-ticker_id = 'MBB'
-ticker = get_pricing(ticker_id+'.csv', '2014-01-01', '2020-05-05')
+ticker_id = 'VHM'
+ticker = get_pricing(ticker_id+'.csv', '2020-01-01', '2020-10-05')
 bt = Backtest(ticker, FollowTheTrend, commission=.005, exclusive_orders=False)
 stats = bt.run()
 bt.plot()
