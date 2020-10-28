@@ -1,9 +1,13 @@
+import os
 import numpy as np
 from backtesting import Backtest, Strategy
 
-from backtesting.magnus import _read_file
+from backtesting.magnus import get_pricing
+import method.Ticker as Ticker
+import method.TakeProfit as TakeProfit
+import method.CutLoss as CutLoss
 
-
+path = os.getcwd()
 class FollowTheTrend(Strategy):
     def init(self):
         self.buy_price = 0
@@ -23,13 +27,11 @@ class FollowTheTrend(Strategy):
             mean_f = np.mean(volumes[-5:-2])
             last_open_price = opens[-1]
             last_price = prices[-1]
-            if last_3_prices[0] < last_3_prices[1] and last_3_prices[0] < last_3_prices[
-                2] and last_volume == max_volume and last_volume > 2.5 * mean_f and last_volume > 1000000 and last_open_price < \
-                    last_3_prices[2]:
+            if self.buy_price == 0 and Ticker.isFollowTrendingV2(prices, volumes, opens[-1], 2.5):
                 self.buy_price = last_price
                 # print("buy date:" + str(self.data.index[-1]))
                 self.buy()
-            if self.buy_price != 0 and (last_price > 1.05 * self.buy_price or last_price < 0.9 * self.buy_price):
+            if self.buy_price != 0 and (TakeProfit.takeProfit(8, last_price, self.buy_price) or CutLoss.shouldCutLossByPercent(8, last_price, self.buy_price)):
                 # print("sell date:" + str(self.data.index[-1]))
                 # print("buy price:" + str(self.buy_price))
                 # print("sell price:" + str(self.last_price))
@@ -37,12 +39,12 @@ class FollowTheTrend(Strategy):
                 self.position.close()
                 self.buy_price = 0
 
-VHM = _read_file('VHM.csv')
-bt = Backtest(VHM, FollowTheTrend, commission=.002,
-              exclusive_orders=True)
+ticker_id = 'MBB'
+ticker = get_pricing(ticker_id+'.csv', '2014-01-01', '2020-05-05')
+bt = Backtest(ticker, FollowTheTrend, commission=.005, exclusive_orders=False)
 stats = bt.run()
-# bt.plot()
+bt.plot()
 print(stats)
 # # print(stats['_trades'])
-new_file = "result_VHM.csv"
+new_file = path+"/result_"+ticker_id+".csv"
 stats['_trades'].to_csv(new_file, index=False)

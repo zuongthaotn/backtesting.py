@@ -23,3 +23,4 @@ doc/build/*
 /testcases/FollowTheTrend/*.csv
 /testcases/StockBreakOut/*.csv
 /testcases/RSI/*.csv
+/testcases/SMA/*.csv
