@@ -4,7 +4,8 @@ from backtesting.lib import crossover
 
 import method.TakeProfit as TakeProfit
 import method.CutLoss as CutLoss
-from backtesting.magnus import SMA, _read_file
+from backtesting.test import SMA
+from backtesting.magnus import _read_file
 
 path = os.getcwd()
 class SmaCross(Strategy):
