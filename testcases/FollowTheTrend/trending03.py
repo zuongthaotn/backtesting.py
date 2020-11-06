@@ -36,16 +36,15 @@ class FollowTheTrend(Strategy):
             if self.buy_price == 0 and Ticker.isFollowTrendingV2(prices, volumes, opens[-1], 2.5):
                 self.buy_price = last_price
                 self.buy()
-            # if self.buy_price != 0 and (TakeProfit.takeProfit(5, last_price, self.buy_price) or CutLoss.shouldCutLossByPercent(8,last_price,self.buy_price)):
-            if self.buy_price != 0 and (crossover(self.ma2, self.ma1) or CutLoss.shouldCutLossByPercent(8, last_price, self.buy_price)):
+            if self.buy_price != 0 and (TakeProfit.takeProfit(5, last_price, self.buy_price) or CutLoss.shouldCutLossByPercent(8,last_price,self.buy_price)):
                 self.position.close()
                 self.buy_price = 0
 
 ticker_id = 'VHM'
-ticker = get_pricing(ticker_id+'.csv', '2020-01-01', '2020-10-05')
-bt = Backtest(ticker, FollowTheTrend, cash=10000, commission=.005, exclusive_orders=False)
+ticker = get_pricing(ticker_id+'.csv', '2018-01-01', '2020-10-05')
+bt = Backtest(ticker, FollowTheTrend, commission=.005, exclusive_orders=False)
 stats = bt.run()
-bt.plot()
+# bt.plot()
 print(stats)
 # # print(stats['_trades'])
 # new_file = path+"/result_"+ticker_id+".csv"
